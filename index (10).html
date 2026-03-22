@@ -1,0 +1,631 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="Save the Dog">
+<meta name="theme-color" content="#0d1f2d">
+<title>Save the Dog</title>
+<link rel="manifest" href="manifest.json">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@700;800&family=DM+Sans:ital,wght@0,400;0,500;1,400&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+:root{
+  --bg:#0d1f2d;--bg2:#112436;--bg3:#162d40;--surf:#1c3550;
+  --bd:rgba(255,255,255,0.07);--bd2:rgba(255,255,255,0.13);
+  --tx:#e2edf8;--tx2:#7a9ab8;--tx3:#3d6080;
+  --gr:#00e5a0;--gr2:#00c088;--grBg:rgba(0,229,160,0.1);
+  --am:#ffb547;--amBg:rgba(255,181,71,0.12);
+  --re:#ff5566;--reBg:rgba(255,85,102,0.12);
+  --r:10px;--r2:16px;
+}
+html,body{min-height:100%;background:var(--bg);color:var(--tx);font-family:'DM Sans',sans-serif;font-size:15px}
+#app{max-width:540px;margin:0 auto;padding:0 1rem;min-height:100vh;display:flex;flex-direction:column}
+.screen{display:none;flex:1;flex-direction:column;padding:1.25rem 0 2rem;animation:fu .2s ease}
+.screen.active{display:flex}
+@keyframes fu{from{opacity:0;transform:translateY(7px)}to{opacity:1;transform:none}}
+.disp{font-family:'Syne',sans-serif;font-weight:800}
+.lbl{font-size:10px;font-weight:600;letter-spacing:.1em;text-transform:uppercase;color:var(--tx3)}
+
+/* KEY SCREEN */
+#s-key{justify-content:center;align-items:center;text-align:center;gap:1.1rem}
+.kdog{font-size:54px;animation:br 3s ease-in-out infinite}
+@keyframes br{0%,100%{transform:scale(1)}50%{transform:scale(1.07)}}
+.ktitle{font-size:32px;line-height:1.1}.ktitle span{color:var(--gr)}
+.ksub{font-size:13px;color:var(--tx2);line-height:1.65;max-width:300px}
+.kcard{background:var(--bg2);border:1px solid var(--bd2);border-radius:var(--r2);padding:1.25rem;width:100%;max-width:380px}
+.klbl{font-size:11px;font-weight:600;color:var(--tx3);letter-spacing:.06em;text-transform:uppercase;margin-bottom:6px;text-align:left}
+.kinput{width:100%;background:var(--bg3);border:1px solid var(--bd);border-radius:var(--r);padding:10px 13px;color:var(--tx);font-size:13px;font-family:'DM Sans',sans-serif;outline:none;transition:border .2s;margin-bottom:.6rem}
+.kinput:focus{border-color:var(--gr)}
+.khint{font-size:12px;color:var(--tx3);text-align:left;margin-bottom:1rem;line-height:1.6}
+.khint a{color:var(--gr);text-decoration:none}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:7px;padding:11px 20px;border-radius:var(--r);border:none;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:all .15s;width:100%}
+.btn-p{background:var(--gr);color:#0d1f2d;font-weight:700}
+.btn-p:hover{background:var(--gr2)}
+.btn-p:active{transform:scale(.97)}
+.btn-p:disabled{background:var(--surf);color:var(--tx3);cursor:default}
+.btn-g{background:transparent;border:1px solid var(--bd2);color:var(--tx2)}
+.btn-g:hover{background:var(--surf);color:var(--tx)}
+.btn-sm{padding:7px 14px;font-size:12px;width:auto}
+
+/* MENU */
+#s-menu{padding-top:1.5rem}
+.mtop{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:1.5rem}
+.mlogo{font-size:28px;margin-bottom:.3rem}
+.mtitle{font-size:28px;line-height:1.05;margin-bottom:.25rem}.mtitle span{color:var(--gr)}
+.msub{font-size:12px;color:var(--tx2)}
+.dbadge{font-size:11px;font-weight:700;padding:5px 11px;border-radius:99px;background:var(--grBg);color:var(--gr);border:1px solid rgba(0,229,160,.2);font-family:'Syne',sans-serif}
+.sgrid{display:grid;grid-template-columns:repeat(auto-fill,minmax(96px,1fr));gap:6px;margin-bottom:1.1rem}
+.sc{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r2);padding:9px 6px;cursor:pointer;text-align:center;transition:all .15s}
+.sc:hover{border-color:var(--bd2);background:var(--bg3)}
+.sc.on{border-color:var(--gr);background:var(--grBg)}
+.sc .ic{font-size:19px;margin-bottom:3px}
+.sc .nm{font-size:11px;font-weight:500;color:var(--tx2)}
+.sc.on .nm{color:var(--gr)}
+.lrow{display:flex;gap:7px;margin-bottom:.75rem}
+.lb{flex:1;padding:9px;border-radius:var(--r);border:1px solid var(--bd);background:var(--bg2);font-size:12px;font-weight:500;cursor:pointer;color:var(--tx3);font-family:'DM Sans',sans-serif;transition:all .15s;text-align:center}
+.lb:hover{background:var(--bg3);color:var(--tx2)}
+.lb.on{background:var(--grBg);border-color:rgba(0,229,160,.25);color:var(--gr)}
+.lb .ln{font-size:13px;font-weight:600;display:block;margin-bottom:1px}
+.lb .ld{font-size:10px;opacity:.65}
+.krow{display:flex;align-items:center;justify-content:space-between;padding:.55rem .9rem;background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r);margin-bottom:.9rem;font-size:12px}
+.kstat{display:flex;align-items:center;gap:5px;color:var(--tx3)}
+.kdot{width:5px;height:5px;border-radius:50%;background:var(--gr)}
+.streak-bar{display:none;align-items:center;justify-content:center;gap:7px;padding:7px;background:var(--amBg);border:1px solid rgba(255,181,71,.2);border-radius:var(--r);margin-bottom:.9rem;font-size:13px;font-weight:500;color:var(--am)}
+.streak-bar.show{display:flex}
+
+/* HUD */
+.hud{display:flex;align-items:center;justify-content:space-between;padding:.55rem 0;margin-bottom:.85rem;border-bottom:1px solid var(--bd);flex-wrap:wrap;gap:7px}
+.hud-l{display:flex;align-items:center;gap:7px}
+.pips{display:flex;gap:3px}
+.pip{width:6px;height:6px;border-radius:50%;background:var(--surf);transition:all .3s}
+.pip.done{background:var(--gr)}
+.pip.now{background:var(--gr);width:9px;height:9px;box-shadow:0 0 8px rgba(0,229,160,.6)}
+.hspec{font-size:11px;color:var(--tx3);font-weight:500}
+.hud-r{display:flex;align-items:center;gap:8px}
+.stag{font-size:13px;font-weight:700;color:var(--gr);background:var(--grBg);padding:3px 10px;border-radius:99px;border:1px solid rgba(0,229,160,.15);font-family:'Syne',sans-serif}
+.ttag{font-size:12px;font-weight:600;padding:3px 10px;border-radius:99px;border:1px solid var(--bd);color:var(--tx2);display:none}
+.ttag.show{display:block}
+.ttag.urg{color:var(--re);border-color:var(--re);background:var(--reBg);animation:pu .5s ease-in-out infinite}
+@keyframes pu{0%,100%{opacity:1}50%{opacity:.55}}
+
+/* DOG VISUAL */
+.dvwrap{display:flex;flex-direction:column;align-items:center;gap:3px}
+.dv{font-size:22px;line-height:1;transition:filter .5s}
+.dv.hurt{animation:shv .15s ease-in-out 3}
+.dv.crit{filter:grayscale(75%);animation:shv .1s ease-in-out 5}
+@keyframes shv{0%,100%{transform:translateX(0)}33%{transform:translateX(-3px)}66%{transform:translateX(3px)}}
+.hpbar{width:48px;height:4px;background:var(--surf);border-radius:99px;overflow:hidden}
+.hpfill{height:100%;border-radius:99px;background:var(--gr);transition:width .6s ease,background .4s}
+
+/* PATIENT CARD */
+.ptcard{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r2);padding:.9rem 1rem;margin-bottom:.8rem}
+.pttop{display:flex;align-items:center;gap:9px;margin-bottom:8px}
+.ptav{width:40px;height:40px;border-radius:50%;background:var(--surf);border:1px solid var(--bd2);display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0}
+.ptname{font-size:15px;font-weight:700;font-family:'Syne',sans-serif}
+.ptmeta{font-size:11px;color:var(--tx2);margin-top:1px}
+.pbadge{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;padding:3px 9px;border-radius:99px;margin-bottom:.55rem}
+.pbadge.norm{background:var(--grBg);color:var(--gr);border:1px solid rgba(0,229,160,.18)}
+.pbadge.tri{background:var(--reBg);color:var(--re);border:1px solid rgba(255,85,102,.25);animation:pu .7s ease-in-out infinite}
+.pdot{width:4px;height:4px;border-radius:50%;background:currentColor}
+
+/* FINDINGS */
+.finding{display:flex;align-items:flex-start;gap:7px;padding:7px 9px;border-radius:var(--r);margin-bottom:4px;animation:si .28s ease both}
+@keyframes si{from{opacity:0;transform:translateX(-5px)}to{opacity:1;transform:none}}
+.finding.normal{background:var(--bg3)}
+.finding.warning{background:var(--amBg);border-left:2px solid var(--am)}
+.finding.alert{background:var(--reBg);border-left:2px solid var(--re)}
+.fdot{width:5px;height:5px;border-radius:50%;margin-top:5px;flex-shrink:0}
+.normal .fdot{background:var(--tx3)}.warning .fdot{background:var(--am)}.alert .fdot{background:var(--re)}
+.fcat{font-size:10px;font-weight:700;min-width:84px;flex-shrink:0;margin-top:2px;letter-spacing:.05em;text-transform:uppercase}
+.normal .fcat{color:var(--tx3)}.warning .fcat{color:var(--am)}.alert .fcat{color:var(--re)}
+.ftxt{font-size:13px;line-height:1.5}
+.normal .ftxt{color:var(--tx2)}.warning .ftxt{color:#ffd47a}.alert .ftxt{color:#ff9099}
+
+/* MINI LOADING */
+.miniload{display:flex;align-items:center;gap:7px;padding:9px 11px;background:var(--bg3);border-radius:var(--r);font-size:12px;color:var(--tx3);margin-bottom:.7rem}
+.mspin{width:13px;height:13px;border:1.5px solid var(--bd2);border-top-color:var(--gr);border-radius:50%;animation:spin .7s linear infinite;flex-shrink:0}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+/* QUESTION */
+.qsec{animation:fu .2s ease}
+.qlbl{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--tx3);margin-bottom:.35rem}
+.qchip{display:inline-block;font-size:10px;padding:2px 7px;border-radius:99px;margin-left:5px;font-weight:600;vertical-align:middle}
+.qchip.easy{background:var(--grBg);color:var(--gr)}
+.qchip.hard{background:var(--reBg);color:var(--re)}
+.qtxt{font-size:14px;font-weight:500;line-height:1.55;margin-bottom:.7rem;color:var(--tx)}
+.choices{display:flex;flex-direction:column;gap:6px;margin-bottom:.7rem}
+.choice{width:100%;text-align:left;padding:10px 12px;background:var(--bg2);border:1px solid var(--bd2);border-radius:var(--r);cursor:pointer;font-size:13px;font-family:'DM Sans',sans-serif;color:var(--tx2);line-height:1.5;transition:all .12s}
+.choice:hover:not(:disabled){background:var(--bg3);border-color:rgba(255,255,255,.17);color:var(--tx)}
+.choice:disabled{cursor:default}
+.choice.correct{border-color:var(--gr);background:var(--grBg);color:#7fffd4}
+.choice.wrong{border-color:var(--re);background:var(--reBg);color:#ffaaaa}
+.choice.ok{border-color:var(--am);background:var(--amBg);color:#ffd580}
+
+/* FEEDBACK */
+.fb{background:var(--bg3);border:1px solid var(--bd);border-radius:var(--r);padding:10px 12px;font-size:13px;line-height:1.7;margin-bottom:.7rem;animation:fu .2s ease;color:var(--tx2)}
+.fbh{font-weight:700;font-size:13px;margin-bottom:3px;font-family:'Syne',sans-serif}
+.fbh.good{color:var(--gr)}.fbh.ok{color:var(--am)}.fbh.bad{color:var(--re)}
+.fbbns{display:inline-block;font-size:11px;background:var(--amBg);color:var(--am);border-radius:99px;padding:2px 7px;margin-left:5px;font-weight:600}
+.fbtp{margin-top:6px;padding-top:6px;border-top:1px solid var(--bd);font-size:12px;color:var(--tx3)}
+.fbtp b{color:var(--tx2);font-weight:500}
+.nrow{display:flex;justify-content:flex-end}
+
+/* LOADING SCREEN */
+#s-loading{justify-content:center;align-items:center;text-align:center;gap:1.1rem}
+.swrap{position:relative;width:58px;height:58px;margin:0 auto}
+.sring{width:58px;height:58px;border-radius:50%;border:2px solid var(--bd2);border-top-color:var(--gr);animation:spin .8s linear infinite}
+.sdog{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:23px}
+.lmsg{font-size:14px;font-weight:500;color:var(--tx)}
+.lsteps{display:flex;flex-direction:column;gap:5px;width:100%;max-width:260px}
+.lstep{font-size:12px;color:var(--tx3);padding:5px 10px;background:var(--bg2);border-radius:var(--r);border:1px solid var(--bd);opacity:0;transition:all .35s;display:flex;align-items:center;gap:7px}
+.lstep.show{opacity:1;color:var(--tx2)}
+.lstep.done{color:var(--gr);border-color:rgba(0,229,160,.2)}
+.ldot{width:5px;height:5px;border-radius:50%;background:var(--bd2);flex-shrink:0;transition:background .3s}
+.lstep.done .ldot{background:var(--gr)}
+
+/* RESULTS */
+#s-results{padding-top:1.25rem}
+.rhead{text-align:center;margin-bottom:1.1rem}
+.rdog{font-size:52px;margin-bottom:.4rem}
+.rtitle{font-size:24px;font-family:'Syne',sans-serif;margin-bottom:.25rem}
+.rsub{font-size:13px;color:var(--tx2)}
+.sgrd{display:grid;grid-template-columns:repeat(3,1fr);gap:7px;margin-bottom:.9rem}
+.stt{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r2);padding:.75rem;text-align:center}
+.stn{font-size:22px;font-weight:700;color:var(--gr);font-family:'Syne',sans-serif}
+.stl{font-size:10px;color:var(--tx3);text-transform:uppercase;letter-spacing:.05em;margin-top:2px}
+.lesson{background:var(--bg2);border:1px solid var(--bd);border-radius:var(--r2);padding:.85rem .95rem;font-size:13px;line-height:1.75;color:var(--tx2);margin-bottom:.9rem}
+.llbl{font-size:10px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--gr);margin-bottom:.35rem}
+.rbtns{display:flex;flex-direction:column;gap:7px}
+
+/* ERROR */
+.errbanner{background:var(--reBg);border:1px solid rgba(255,85,102,.25);color:#ffaaaa;border-radius:var(--r);padding:9px 12px;font-size:13px;line-height:1.5;margin-bottom:.9rem}
+.errbanner strong{display:block;margin-bottom:3px;color:var(--re)}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- API KEY -->
+<div id="s-key" class="screen active">
+  <div class="kdog disp">🐕</div>
+  <div class="ktitle disp">Save the <span>Dog</span></div>
+  <p class="ksub">AI-powered clinical cases for vets and vet students. Enter your Anthropic API key to begin.</p>
+  <div class="kcard">
+    <div class="klbl">Anthropic API Key</div>
+    <input class="kinput" type="password" id="api-key-input" placeholder="sk-ant-..." autocomplete="off" spellcheck="false">
+    <p class="khint">Get a free key at <a href="https://console.anthropic.com" target="_blank">console.anthropic.com</a>. Stored only in this browser.</p>
+    <button class="btn btn-p" onclick="saveKey()">Start →</button>
+  </div>
+</div>
+
+<!-- MENU -->
+<div id="s-menu" class="screen">
+  <div class="mtop">
+    <div>
+      <div class="mlogo">🐕</div>
+      <div class="mtitle disp">Save the <span>Dog</span></div>
+      <div class="msub">AI clinical cases · Real decisions</div>
+    </div>
+    <div class="dbadge" id="dbadge">Level 1</div>
+  </div>
+  <div class="lbl" style="margin-bottom:7px">Specialty</div>
+  <div class="sgrid" id="spec-grid">
+    <div class="sc on" data-v="internal medicine"><div class="ic">🫀</div><div class="nm">Internal</div></div>
+    <div class="sc" data-v="orthopedics"><div class="ic">🦴</div><div class="nm">Ortho</div></div>
+    <div class="sc" data-v="oncology"><div class="ic">🔬</div><div class="nm">Oncology</div></div>
+    <div class="sc" data-v="dermatology"><div class="ic">🐾</div><div class="nm">Dermato</div></div>
+    <div class="sc" data-v="cardiology"><div class="ic">❤️</div><div class="nm">Cardio</div></div>
+    <div class="sc" data-v="ophthalmology"><div class="ic">👁️</div><div class="nm">Ophthal</div></div>
+    <div class="sc" data-v="behaviour"><div class="ic">🧠</div><div class="nm">Behaviour</div></div>
+    <div class="sc" data-v="obstetrics"><div class="ic">🐣</div><div class="nm">Obstetrics</div></div>
+    <div class="sc" data-v="random"><div class="ic">🎲</div><div class="nm">Random</div></div>
+  </div>
+  <div class="lbl" style="margin-bottom:7px">Difficulty</div>
+  <div class="lrow">
+    <button class="lb on" data-v="student"><span class="ln">Student</span><span class="ld">Explanations included</span></button>
+    <button class="lb" data-v="vet"><span class="ln">Qualified vet</span><span class="ld">No hand-holding</span></button>
+  </div>
+  <div class="streak-bar" id="streak-bar">🔥 <span id="streak-txt"></span></div>
+  <div class="krow">
+    <div class="kstat"><div class="kdot"></div>API key active</div>
+    <button class="btn btn-g btn-sm" onclick="clearKey()">Change key</button>
+  </div>
+  <button class="btn btn-p" onclick="startCase()">Generate case →</button>
+</div>
+
+<!-- LOADING -->
+<div id="s-loading" class="screen">
+  <div class="swrap"><div class="sring"></div><div class="sdog">🐕</div></div>
+  <div class="lmsg">Building your case...</div>
+  <div class="lsteps">
+    <div class="lstep" id="ls0"><div class="ldot"></div>Inventing the patient</div>
+    <div class="lstep" id="ls1"><div class="ldot"></div>Writing history &amp; examination</div>
+  </div>
+</div>
+
+<!-- GAME -->
+<div id="s-game" class="screen">
+  <div class="hud">
+    <div class="hud-l">
+      <div class="pips" id="pips"></div>
+      <div class="hspec" id="hspec"></div>
+    </div>
+    <div class="hud-r">
+      <div class="ttag" id="ttag">⏱ <span id="tval">20</span>s</div>
+      <div class="dvwrap">
+        <div class="dv" id="dv">🐕</div>
+        <div class="hpbar"><div class="hpfill" id="hpf" style="width:100%"></div></div>
+      </div>
+      <div class="stag" id="stag">0 pts</div>
+    </div>
+  </div>
+  <div id="gbody" style="flex:1;overflow-y:auto;padding-bottom:1rem"></div>
+</div>
+
+<!-- RESULTS -->
+<div id="s-results" class="screen">
+  <div class="rhead">
+    <div class="rdog" id="rdog">🐕</div>
+    <div class="rtitle disp" id="rtitle">Case complete</div>
+    <div class="rsub" id="rsub"></div>
+  </div>
+  <div class="sgrd">
+    <div class="stt"><div class="stn" id="rpts">0</div><div class="stl">Points</div></div>
+    <div class="stt"><div class="stn" id="racc">0/0</div><div class="stl">Correct</div></div>
+    <div class="stt"><div class="stn" id="rhp">100%</div><div class="stl">Dog health</div></div>
+  </div>
+  <div class="lesson"><div class="llbl">Key learning</div><div id="rlesson"></div></div>
+  <div class="rbtns">
+    <button class="btn btn-p" onclick="startCase()">New case →</button>
+    <button class="btn btn-g" onclick="goMenu()">Change specialty</button>
+  </div>
+</div>
+
+</div>
+
+<script>
+const API='https://api.anthropic.com/v1/messages';
+const MODEL='claude-haiku-4-5';
+const SPECS=['internal medicine','orthopedics','oncology','dermatology','cardiology','ophthalmology','behaviour','obstetrics'];
+
+let G={
+  apiKey:'',spec:'internal medicine',lvl:'student',
+  score:0,hp:100,qi:0,correct:0,total:0,
+  streak:0,totalStreak:0,difficulty:1,
+  tmr:null,p1:null,p2:null,answered:false,
+  questions:[],activeSpec:'',finalLesson:'',p2err:false
+};
+
+window.addEventListener('DOMContentLoaded',()=>{
+  const k=localStorage.getItem('std_key');
+  G.difficulty=parseInt(localStorage.getItem('std_diff')||'1');
+  G.totalStreak=parseInt(localStorage.getItem('std_streak')||'0');
+  updateBadge(); updateStreakBar();
+  if(k){G.apiKey=k;show('s-menu');}else show('s-key');
+
+  document.getElementById('spec-grid').addEventListener('click',e=>{
+    const c=e.target.closest('.sc');if(!c)return;
+    document.querySelectorAll('.sc').forEach(x=>x.classList.remove('on'));
+    c.classList.add('on');G.spec=c.dataset.v;
+  });
+  document.querySelectorAll('.lb').forEach(b=>b.addEventListener('click',()=>{
+    document.querySelectorAll('.lb').forEach(x=>x.classList.remove('on'));
+    b.classList.add('on');G.lvl=b.dataset.v;
+  }));
+  document.getElementById('api-key-input').addEventListener('keydown',e=>{if(e.key==='Enter')saveKey();});
+});
+
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+function goMenu(){clearInterval(G.tmr);show('s-menu');}
+
+function saveKey(){
+  const k=document.getElementById('api-key-input').value.trim();
+  if(!k.startsWith('sk-')){showErr('Please enter a valid key starting with sk-');return;}
+  G.apiKey=k;localStorage.setItem('std_key',k);show('s-menu');
+}
+function clearKey(){localStorage.removeItem('std_key');G.apiKey='';document.getElementById('api-key-input').value='';show('s-key');}
+
+function showErr(msg){
+  const old=document.getElementById('eb');if(old)old.remove();
+  const el=document.createElement('div');el.id='eb';el.className='errbanner';
+  el.innerHTML=`<strong>Error</strong>${msg}`;
+  const m=document.getElementById('s-menu');
+  m.insertBefore(el,m.firstChild);
+  setTimeout(()=>el.remove(),15000);
+}
+
+function updateBadge(){const el=document.getElementById('dbadge');if(el)el.textContent='Level '+G.difficulty;}
+function updateStreakBar(){
+  const bar=document.getElementById('streak-bar');
+  const txt=document.getElementById('streak-txt');
+  if(!bar||!txt)return;
+  if(G.totalStreak>=3){bar.classList.add('show');txt.textContent=G.totalStreak+' correct in a row — keep going!';}
+  else bar.classList.remove('show');
+}
+
+function diffNote(){
+  const d=G.difficulty;
+  if(d<=2)return'Make this a straightforward case with clear classic signs.';
+  if(d<=4)return'Make this moderately complex with some subtle findings.';
+  if(d<=6)return'Make this complex with atypical presentation and tricky differentials.';
+  return'Make this highly complex, with atypical or subtle signs and realistic red herrings.';
+}
+
+// ── API CALL ──────────────────────────────────────
+async function callAPI(sys,prompt){
+  const res=await fetch(API,{
+    method:'POST',
+    headers:{'Content-Type':'application/json','x-api-key':G.apiKey,'anthropic-version':'2023-06-01','anthropic-dangerous-direct-browser-access':'true'},
+    body:JSON.stringify({model:MODEL,max_tokens:2000,system:sys,messages:[{role:'user',content:prompt}]})
+  });
+  if(!res.ok){const e=await res.json().catch(()=>({}));throw new Error('HTTP '+res.status+': '+(e.error?.message||'API error'));}
+  const data=await res.json();
+  const raw=data.content.map(b=>b.text||'').join('');
+  const m=raw.match(/\{[\s\S]*\}/);
+  if(!m)throw new Error('No JSON returned — please try again.');
+  return JSON.parse(m[0]);
+}
+
+function shuffle(q){
+  const a=q.choices;
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return q;
+}
+
+// ── PHASE 1 PROMPT: history + exam only ──────────
+function p1Prompt(spec){
+  const lvl=G.lvl==='vet'?'qualified vet, clinical terminology':'vet student, explain terms';
+  return{
+    sys:`Veterinary clinical case generator. Output ONLY raw JSON, no markdown. Level: ${lvl}. ${diffNote()}`,
+    prompt:`Generate the FIRST HALF of a canine ${spec} clinical case. Output ONLY valid JSON filling all X with real content. Keep all explanations to 1 sentence maximum:
+{"patient":{"name":"X","breed":"X","age":"X","sex":"X"},"q1":{"phase":"History","findings":[{"cat":"Signalment","text":"X","flag":"none"},{"cat":"Chief complaint","text":"X","flag":"warning"},{"cat":"Duration","text":"X","flag":"none"},{"cat":"Owner history","text":"X","flag":"none"}],"question":"X","choices":[{"text":"X","correct":true,"impact":"good","explain":"X"},{"text":"X","correct":false,"impact":"bad","explain":"X"},{"text":"X","correct":false,"impact":"bad","explain":"X"},{"text":"X","correct":false,"impact":"neutral","explain":"X"}],"teach":"X"},"q2":{"phase":"Physical examination","findings":[{"cat":"General","text":"X","flag":"none"},{"cat":"Key finding","text":"X","flag":"warning"},{"cat":"Neurological","text":"X","flag":"none"},{"cat":"Auscultation","text":"X","flag":"none"},{"cat":"Vitals","text":"X","flag":"none"}],"question":"X","choices":[{"text":"X","correct":true,"impact":"good","explain":"X"},{"text":"X","correct":false,"impact":"bad","explain":"X"},{"text":"X","correct":false,"impact":"bad","explain":"X"},{"text":"X","correct":false,"impact":"neutral","explain":"X"}],"teach":"X"}}`
+  };
+}
+
+// ── PHASE 2 PROMPT: diagnostics + triage ─────────
+function p2Prompt(spec,ctx){
+  const lvl=G.lvl==='vet'?'qualified vet, clinical terminology':'vet student, explain terms';
+  return{
+    sys:`Veterinary clinical case generator. Output ONLY raw JSON, no markdown. Level: ${lvl}. ${diffNote()}`,
+    prompt:`Continue this canine ${spec} case (patient: ${ctx}). Generate the SECOND HALF. Output ONLY valid JSON, 1 sentence explanations max:
+{"q3":{"phase":"Diagnostics","findings":[{"cat":"Haematology","text":"X","flag":"warning"},{"cat":"Biochemistry","text":"X","flag":"warning"},{"cat":"Urinalysis","text":"X","flag":"none"},{"cat":"Imaging","text":"X","flag":"warning"}],"question":"X","choices":[{"text":"X","correct":true,"impact":"good","explain":"X"},{"text":"X","correct":false,"impact":"bad","explain":"X"},{"text":"X","correct":false,"impact":"bad","explain":"X"},{"text":"X","correct":false,"impact":"neutral","explain":"X"}],"teach":"X"},"q4":{"phase":"Triage","triage":true,"findings":[{"cat":"Alert","text":"Patient deteriorating — act now","flag":"alert"},{"cat":"Finding","text":"X","flag":"alert"},{"cat":"Vitals","text":"X","flag":"alert"}],"question":"Urgent: what is your immediate action?","choices":[{"text":"X","correct":true,"impact":"good","explain":"X"},{"text":"X","correct":false,"impact":"bad","explain":"X"},{"text":"X","correct":false,"impact":"bad","explain":"X"},{"text":"X","correct":false,"impact":"bad","explain":"X"}],"teach":"X"},"final_lesson":"X"}`
+  };
+}
+
+// ── START ─────────────────────────────────────────
+async function startCase(){
+  clearInterval(G.tmr);
+  G.score=0;G.hp=100;G.qi=0;G.correct=0;G.total=0;G.streak=0;
+  G.p1=null;G.p2=null;G.questions=[];G.answered=false;G.p2err=false;G.finalLesson='';
+
+  const spec=G.spec==='random'?SPECS[Math.floor(Math.random()*SPECS.length)]:G.spec;
+  G.activeSpec=spec;
+
+  show('s-loading');
+  setTimeout(()=>{const e=document.getElementById('ls0');if(e)e.classList.add('show');},100);
+  setTimeout(()=>{const e=document.getElementById('ls1');if(e)e.classList.add('show');const p=document.getElementById('ls0');if(p)p.classList.add('done');},700);
+
+  try{
+    const {sys,prompt}=p1Prompt(spec);
+    const d=await callAPI(sys,prompt);
+    if(d.q1)shuffle(d.q1);
+    if(d.q2)shuffle(d.q2);
+    G.p1=d;
+    G.questions=[
+      {id:1,triage:false,...d.q1},
+      {id:2,triage:false,...d.q2},
+    ];
+    show('s-game');
+    renderPips();
+    updateDog();
+    renderQ();
+
+    // Fire phase 2 in background immediately
+    const ctx=`${d.patient.name}, ${d.patient.breed}, ${d.patient.age}, ${d.patient.sex}`;
+    const {sys:s2,prompt:p2}=p2Prompt(spec,ctx);
+    callAPI(s2,p2).then(d2=>{
+      if(d2.q3)shuffle(d2.q3);
+      if(d2.q4)shuffle(d2.q4);
+      G.p2=d2;
+      G.finalLesson=d2.final_lesson||'';
+      G.questions.push({id:3,triage:false,...d2.q3},{id:4,triage:true,...d2.q4});
+      renderPips();
+    }).catch(()=>{G.p2err=true;});
+
+  }catch(e){
+    goMenu();
+    showErr(e.message);
+  }
+}
+
+// ── RENDER PIPS ───────────────────────────────────
+function renderPips(){
+  const total=Math.max(4,G.questions.length);
+  let h='';
+  for(let i=0;i<total;i++)h+=`<div class="pip ${i<G.qi?'done':i===G.qi?'now':''}"></div>`;
+  const el=document.getElementById('pips');if(el)el.innerHTML=h;
+}
+
+// ── RENDER QUESTION ───────────────────────────────
+function renderQ(){
+  clearInterval(G.tmr);
+  G.answered=false;
+
+  // Waiting for phase 2
+  if(G.qi>=G.questions.length){
+    if(G.p2err){showResults();return;}
+    document.getElementById('gbody').innerHTML=`<div class="miniload"><div class="mspin"></div>Loading next phase — just a moment...</div>`;
+    setTimeout(renderQ,900);
+    return;
+  }
+
+  const q=G.questions[G.qi];
+  const pt=G.p1.patient;
+  updateHUD(q);
+  renderPips();
+
+  const dchip=G.difficulty<=2?'':G.difficulty<=5?
+    `<span class="qchip easy">Lvl ${G.difficulty}</span>`:
+    `<span class="qchip hard">Lvl ${G.difficulty}</span>`;
+
+  const p2note=(G.qi===1&&!G.p2&&!G.p2err)?
+    `<div class="miniload"><div class="mspin"></div>Loading diagnostics in background...</div>`:'';
+
+  document.getElementById('gbody').innerHTML=`
+    <div class="ptcard">
+      <div class="pttop">
+        <div class="ptav">${dogIco(pt.breed)}</div>
+        <div><div class="ptname">${pt.name}</div><div class="ptmeta">${pt.breed} · ${pt.age} · ${pt.sex}</div></div>
+      </div>
+      <div class="pbadge ${q.triage?'tri':'norm'}"><div class="pdot"></div>${q.phase}</div>
+      <div id="fw"></div>
+    </div>
+    ${p2note}
+    <div class="qsec hide" id="qsec">
+      <div class="qlbl">Your decision${dchip}</div>
+      <div class="qtxt">${q.question}</div>
+      <div class="choices">${q.choices.map((c,i)=>`<button class="choice" onclick="answer(${i})">${c.text}</button>`).join('')}</div>
+      <div class="fb hide" id="fb"></div>
+      <div class="nrow"><button class="btn btn-p" id="nb" onclick="advance()" disabled style="width:auto;min-width:126px">${G.qi<3?'Continue →':'Results →'}</button></div>
+    </div>`;
+
+  revealF(q.findings,0);
+}
+
+function revealF(findings,idx){
+  const fw=document.getElementById('fw');
+  if(!fw||idx>=findings.length){
+    setTimeout(()=>{const q=document.getElementById('qsec');if(q)q.classList.remove('hide');},280);
+    return;
+  }
+  const f=findings[idx];
+  const cls=f.flag==='alert'?'alert':f.flag==='warning'?'warning':'normal';
+  const el=document.createElement('div');
+  el.className=`finding ${cls}`;
+  el.style.animationDelay=`${idx*0.04}s`;
+  el.innerHTML=`<div class="fdot"></div><div class="fcat">${f.cat}</div><div class="ftxt">${f.text}</div>`;
+  fw.appendChild(el);
+  setTimeout(()=>revealF(findings,idx+1),idx===0?80:460);
+}
+
+// ── ANSWER ────────────────────────────────────────
+function answer(idx){
+  if(G.answered)return;
+  G.answered=true;
+  clearInterval(G.tmr);
+  document.getElementById('ttag').className='ttag';
+  const q=G.questions[G.qi];
+  document.querySelectorAll('.choice').forEach(b=>b.disabled=true);
+  const ci=q.choices.findIndex(c=>c.correct);
+  const chosen=idx>=0?q.choices[idx]:null;
+  G.total++;
+  let head='',cls='bad',bonus='';
+
+  if(!chosen){
+    G.hp=Math.max(0,G.hp-25);G.streak=0;
+    head="Time's up!";
+    document.querySelectorAll('.choice')[ci]?.classList.add('correct');
+  }else if(chosen.correct){
+    G.streak++;G.totalStreak++;G.correct++;
+    let pts=100;
+    if(G.streak>=3){pts=150;bonus=`🔥 ×${G.streak} streak`;}
+    else if(G.streak===2){pts=120;bonus='streak bonus';}
+    G.score+=pts;
+    head=bonus?`Correct!`:`Correct — +${pts} pts`;cls='good';
+    document.querySelectorAll('.choice')[idx].classList.add('correct');
+    // Level up every 3 correct in a row
+    if(G.totalStreak>0&&G.totalStreak%3===0){
+      G.difficulty=Math.min(8,G.difficulty+1);
+      localStorage.setItem('std_diff',G.difficulty);
+      updateBadge();
+    }
+  }else if(chosen.impact==='neutral'){
+    G.score+=30;G.hp=Math.max(0,G.hp-5);G.streak=0;
+    head='Acceptable, not optimal — +30 pts';cls='ok';
+    document.querySelectorAll('.choice')[idx].classList.add('ok');
+    document.querySelectorAll('.choice')[ci]?.classList.add('correct');
+  }else{
+    G.hp=Math.max(0,G.hp-25);G.streak=0;
+    if(G.difficulty>1){G.difficulty=Math.max(1,G.difficulty-1);localStorage.setItem('std_diff',G.difficulty);updateBadge();}
+    head='Incorrect';
+    document.querySelectorAll('.choice')[idx].classList.add('wrong');
+    document.querySelectorAll('.choice')[ci]?.classList.add('correct');
+  }
+  localStorage.setItem('std_streak',G.totalStreak);
+
+  const exp=chosen?chosen.explain:`Best answer: ${q.choices[ci].text}. ${q.choices[ci].explain}`;
+  const fb=document.getElementById('fb');
+  if(fb){
+    fb.innerHTML=`<div class="fbh ${cls}">${head}${bonus?`<span class="fbbns">${bonus}</span>`:''}</div>${exp}<div class="fbtp"><b>Teaching point:</b> ${q.teach}</div>`;
+    fb.classList.remove('hide');
+  }
+  document.getElementById('nb').disabled=false;
+  updateHUD(q);updateDog();
+}
+
+function advance(){
+  G.qi++;
+  if(G.qi>=4||G.hp<=0)showResults();
+  else renderQ();
+}
+
+// ── DOG + HUD ─────────────────────────────────────
+function updateDog(){
+  const dv=document.getElementById('dv');
+  const hf=document.getElementById('hpf');
+  if(!dv)return;
+  if(G.hp>75){dv.textContent='🐕';dv.className='dv';}
+  else if(G.hp>50){dv.textContent='🐕';dv.className='dv hurt';}
+  else if(G.hp>25){dv.textContent='🐕';dv.className='dv hurt';}
+  else{dv.textContent='🐶';dv.className='dv crit';}
+  if(hf){hf.style.width=G.hp+'%';hf.style.background=G.hp>60?'var(--gr)':G.hp>30?'var(--am)':'var(--re)';}
+}
+
+function updateHUD(q){
+  updateDog();
+  const sc=document.getElementById('stag');if(sc)sc.textContent=G.score+' pts';
+  const hs=document.getElementById('hspec');if(hs)hs.textContent=G.activeSpec;
+  const tt=document.getElementById('ttag');
+  const tv=document.getElementById('tval');
+  if(q?.triage){
+    tt.className='ttag show';let t=20;tv.textContent=t;
+    G.tmr=setInterval(()=>{
+      t--;tv.textContent=t;
+      if(t<=8)tt.classList.add('urg');
+      if(t<=0){clearInterval(G.tmr);answer(-1);}
+    },1000);
+  }
+}
+
+// ── RESULTS ──────────────────────────────────────
+function showResults(){
+  clearInterval(G.tmr);
+  updateStreakBar();
+  const ok=G.hp>0;
+  const pct=Math.round((G.correct/Math.max(G.total,1))*100);
+  document.getElementById('rdog').textContent=ok?(pct>=75?'🏆':'🐕'):'💔';
+  document.getElementById('rtitle').textContent=ok?(pct>=75?'Excellent work!':'Case complete'):'Patient deteriorated';
+  document.getElementById('rsub').textContent=ok?`${G.p1.patient.name} · ${G.activeSpec}`:'Critical errors led to decline.';
+  document.getElementById('rpts').textContent=G.score;
+  document.getElementById('racc').textContent=`${G.correct}/${G.total}`;
+  document.getElementById('rhp').textContent=G.hp+'%';
+  document.getElementById('rlesson').textContent=G.finalLesson||G.p2?.final_lesson||'Review the case findings and teaching points above.';
+  show('s-results');
+}
+
+function dogIco(b){
+  if(!b)return'🐕';const bl=b.toLowerCase();
+  if(bl.includes('labrador')||bl.includes('retriever'))return'🦮';
+  if(bl.includes('shepherd')||bl.includes('husky'))return'🐺';
+  if(bl.includes('pug')||bl.includes('bulldog'))return'🐶';
+  if(bl.includes('poodle')||bl.includes('spaniel'))return'🐩';
+  return'🐕';
+}
+</script>
+</body>
+</html>
